@@ -2,7 +2,7 @@
 
 # plot the estimated locations and calculate delta and ciArea
 
-# pdf(file='M100b.pdf', height=6, width=6)
+pdf(file='M100b.pdf', height=6, width=6)
 
 par(mfrow=c(1,1), mar=c(3,3,0,0)+0.5, mgp=c(2,0.8,0))
 
@@ -35,7 +35,7 @@ lines(ellipse(
   t = sqrt(2*(n-1)*qf(0.95, 2, n-2)/(n-2)) )
   )
 
-# dev.off()
+ dev.off()
 
 delta <- sqrt( (Mtrue$L_E - estlocMedian[,1])^2
   + (Mtrue$L_N - estlocMedian[,2])^2)
