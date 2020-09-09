@@ -31,6 +31,7 @@ for (i in 1:npts) {
   variance_matrix <- matrix(
     c(thisloc$VarX, thisloc$Cov, thisloc$Cov, thisloc$VarY), 
     ncol=2)
+  variance_matrix <- variance_matrix
   Ivar <- solve(variance_matrix)
   if (variance_matrix [1,1] > 0 & variance_matrix[2,2] > 0){
       dir <- eigen(variance_matrix)[[2]][,1] # this define the direction of long axes of ellipse

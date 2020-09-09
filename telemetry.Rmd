@@ -27,7 +27,7 @@ library(lubridate)
 library(mgcv)
 ```
 
-Define multiple functions used the code
+Define multiple functions used in the code
 ```{r functions}
 source('functions.r')
 source('find functions.r')
@@ -60,16 +60,16 @@ source('walk predict.r')
 source('walk plot.r')
 ```
 
-### Transmitter on a butterfly
-```{r calibrate Monarch}
-source('Monarch calibrate.r')
+### Transmitter on a flying butterfly
+```{r calibrate Monarch 171}
+source('M171 calibrate.r')
 ```
 
-```{r predict Monarch, cache=TRUE}
-source('Monarch predict.r')
+```{r predict Monarch 171, cache=TRUE}
+source('M171 predict.r')
 ```
 
-```{r plot Monarch, cache=TRUE}
-source('Monarch plot.r')
+```{r plot Monarch 171}
+source('M171 plot.r')
 ```
 

@@ -1,4 +1,4 @@
-# functions used in find locations.r
+# functions used in various files to find and plot locations
 
 # rewritten to use June 19 data structure
 
@@ -11,13 +11,15 @@ truncPower <- function(power, s, trunc=54) {
 # tower / antenna information 
 #   and an angle model with separate forward and backward lobes
 
-plot.tower <- function(ds, ydata=NULL, label=F, 
-  round=1, expansion = 1.1, addLoc=T, labelLoc=NULL, center=T) {
+plot.tower <- function(ds, ydata=NULL, label=NULL, 
+  round=1, expansion = 1.1, addLoc=T, labelLoc=NULL, 
+  center=T, bar=10) {
   # plot tower locations, antenna directions and (optionall) a vector response
   # antenna directions are clockwise degrees from N
   #   compute angles are counter clockwise degrees from E
   # center = F => use northing and easting;
   #   =T center plot at (0,0)
+  # bar: size of antenna bar (in m)
   
   x <- ds$T_E - mean(ds$T_E)
   y <- ds$T_N - mean(ds$T_N)
@@ -34,13 +36,15 @@ plot.tower <- function(ds, ydata=NULL, label=F,
   plot(x,y, xlim=xlim, ylim=ylim, type='n', 
     xlab='Easting', ylab='Northing', asp=1)
   
-  if (label) {text(x, y, substring(ds$Tower, 2,2)) }
-    else {points(x, y, pch='+', col=3, cex=1.2) }
+  if (!is.null(label)) {
+    if (label) {text(x, y, substring(ds$Tower, 2,2)) }
+      else {points(x, y, pch='+', col=3, cex=1.2) }
+    }
   
   angle <- pi/2 - 2*pi*ds$EstAzimuth/360
   
-  bitx <- 10*cos(angle)
-  bity <- 10*sin(angle)
+  bitx <- bar*cos(angle)
+  bity <- bar*sin(angle)
   
   segments(x, y, x + bitx, y + bity)
   if (!is.null(ydata)) {
@@ -62,28 +66,6 @@ plot.tower <- function(ds, ydata=NULL, label=F,
   }
 
   invisible(NULL)
-  }
-
-merge.raneff <- function(ds, fit, inclTower=T, inclTA = T) {
-  # merge random effects for Tower and/or Tower:Antenna from fit into the data set ds
-  # uses dplyer functions
-  
-  ds$TAkey <- paste(ds$Tower, ds$Antenna, sep=':')
-  # matches Tower:Antenna code in ranef(fit)
-  
-  # setup random effects vectors
-  if (inclTower) {
-    temp <- ranef(fit)$Tower
-    rT <- data.frame(Tower=row.names(temp), ranTower=temp[,1], stringsAsFactors = F)
-    ds <- left_join(ds, rT, by='Tower')
-    }
-  
-  if (inclTA) {
-    temp <- ranef(fit)$'Tower:Antenna'
-    rTA <- data.frame(TAkey=row.names(temp), ranTA=temp[,1], stringsAsFactors = F)
-    ds <- left_join(ds, rTA, by='TAkey')
-    }
-  ds
 }
 
 power <- function(xy, ds, model, trunc=54, s=5) {
@@ -174,4 +156,21 @@ ss.xy <- function(xy, ds, model, trunc=54, s=5) {
   pred <- power(xy, ds, model, trunc, s)
   sum((pred - ds$Power)^2)
   
+  }
+
+add.ellipse <- function(allLoci, ellipse.col = 1) {
+  # draw a 95% confidence ellipse for an estimated location
+  # can provide either vc matrix, center, and # obs
+  # or the row of data from an allLocs matrix
+  #  that has Nobs, est_E, est_N, Var E, Cov and Var N
+  
+  vc <- matrix(allLoci[c('Var E','Cov','Cov','Var N')], nrow=2)
+  xy <- allLoci[c('est_E','est_N')]
+  n <- allLoci['Nobs']
+  
+  q <- (n - 1) * 2 * qf(p = 0.95, df1 = 2, df2 = (n-2))/(n-2) 
+  # F quantile for 95% confidence ellipse
+  
+  lines(ellipse(x=vc, centre=xy, t = sqrt(q) ),
+  	    col=ellipse.col)
   }

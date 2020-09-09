@@ -89,7 +89,8 @@ initial.y <- mean(unique(d.train$T_N), na.rm = T)
 
 model2.2 <- lmer(Power ~ log_Dist + Angle_plus_mask + Angle_minus_mask + 
                      (0+Angle_plus_mask|T_A) + (0+Angle_minus_mask|T_A) + (1|T_A),
-                   data = d.train, REML = F)
+					 subset=Distance < 170,
+                   data = d.train, REML = T)
 
 # now estimate locations of test points
 
@@ -117,6 +118,7 @@ for (i in  seq_along(unique(test.point))){
   y.true <- test.distance$L_N[1]
   
   variance_matrix <- solve(prediction$hessian) 
+    
      
 # save results      
     estloc[i,1] <- dim(test.distance)[1]

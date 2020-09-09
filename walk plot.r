@@ -18,6 +18,8 @@ points(walk2true$L_E, walk2true$L_N, pch=19, col=4)
 
 
 # repeat with every 15 seconds
+npts <- dim(allwalk)[1]
+
 par(mfrow=c(1,1), mar=c(3,3,0.5,0.5)+0.3, mgp=c(2,0.8,0))
 
 plot.tower(move1, label=F, center=F)

@@ -1,8 +1,10 @@
 # estimate calibration functions, starting with raw data
 
 # read data and calculate distance and angle for known locations
+
 apr19 <- read.csv('050319_Spring19Callibration_AllDays_MedianPower_Formatted.csv', as.is=T)
 apr19key <- read.csv('051319_key.csv', as.is=T)
+
 # The key file specifies the type of location
 #   circle: different angles, 25m from tower
 #   distance: one angle, different distances from tower
@@ -31,6 +33,8 @@ apr19.mm <- lmer(Power ~ logDistance + anglef + angleb
   + (1|Tower:Antenna) + (0+anglef|Tower:Antenna) 
   + (0+angleb|Tower:Antenna), subset = (Distance < 150),
   data=apr19locs)
-
 # fit linear model up to 150 m
+
+save(apr19.mm, file='apr19Model.sav')
+
 

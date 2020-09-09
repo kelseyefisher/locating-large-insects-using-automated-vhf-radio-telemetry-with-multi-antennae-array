@@ -33,11 +33,12 @@ log.likelihood <- function (location){
   
   test.distance$predict <<- predict(model2.2,test.distance, allow.new.levels=T )
   
-  test.distance <<- test.distance %>% mutate(OE = truncnorm::etruncnorm(a = 50, mean = predict, sd = sigma(model2.2)), 
-    #ll = log(dnorm(Power, predict, sigma(model2.2))* (1-pnorm(50,predict, sigma(model2.2)))^(-1)),
-    #ll= log(truncnorm::dtruncnorm(Power, a=50, b=Inf, mean = predict, sd = sigma(model2.2))), # same as above
-    ll = log(dnorm(Power, predict, sigma(model2.2)))) 
   
+  test.distance <<- test.distance %>% mutate(OE = truncnorm::etruncnorm(a = 50, mean = predict, sd = sigma(model2.2)), 
+    #ll = log(dnorm(Power, predict, sigma(model2.2))* (1-pnorm(50,predict, sigma(model2.2)))^(-1))
+    #ll= log(truncnorm::dtruncnorm(Power, a=54, b=Inf, mean = predict, sd = sigma(model2.2)))  # same as above
+    ll = log(dnorm(Power, predict, sigma(model2.2))) 
+    )
   
   ss <- test.distance %>% transmute((Power - OE)^2) %>% sum()
   ll <- test.distance %>% pull(ll) %>% sum() %>% subtract()
